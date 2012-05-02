@@ -1,0 +1,6 @@
+- Como descobrir o número de núcleos no computador em que irá executar?
+- Leitura da entrada ( n <nomedoarquivo> [-debug] )
+- Estruturas do Grafo com Matriz de adj
+- m-1 listas de caminhos
+- Barreira ??
+- Relatório com o Grafo do enunciado
