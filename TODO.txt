@@ -1,4 +1,5 @@
-- Como descobrir o número de núcleos no computador em que irá executar?
+- Como descobrir o número de núcleos no computador em que irá executar? 
+	sysconf (_SC_NPROCESSORS_ONLN)
 - Leitura da entrada ( n <nomedoarquivo> [-debug] )
 - Estruturas do Grafo com Matriz de adj
 - m-1 listas de caminhos
