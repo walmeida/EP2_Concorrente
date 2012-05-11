@@ -5,3 +5,15 @@
 - m-1 listas de caminhos
 - Barreira ??
 - Relatório com o Grafo do enunciado
+
+Implementação:
+- Estrutura de "Fila" ( lista duplamente ligada ) com mutex e tamanho, onde cada elemento é um caminho 0-a,b,...,x
+- Vetor de "Filas" para os k caminhos mínimos até cada índice do vetor ( vértice )
+- Fila dos próximos caminhos a serem processados.
+- Barreira de Disseminação com while normal.
+- Contador de quantos vértices possuem ao menos k caminhos mínimos.
+- Lembrar de manter estrutura de "Fila" ordenada pelo tamanho dos caminhos (tenta inserir no final, se for menor do que o último, vai voltando até inserir no lugar certo).
+- Leitura
+- Saída
+- LEIAME
+- Relatório
