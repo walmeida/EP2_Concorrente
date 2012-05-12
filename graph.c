@@ -1,5 +1,5 @@
 #include "graph.h" 
-double maxcst; // A ser definido dinammicamente
+double maxcst; /* A ser definido dinammicamente */
 
 Digraph DIGRAPHinit (int V){
 	Digraph G;

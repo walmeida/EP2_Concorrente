@@ -1,13 +1,11 @@
 #ifndef QUEUE_H_
 #define QUEUE_H_
 
-#include "caminho.h"
-typedef caminho Item;
+typedef int Item;
 
 /* FIFO queue */
 
 typedef struct node {
-    struct node *prev;
     struct node *next;
     Item *data;
 } node;
