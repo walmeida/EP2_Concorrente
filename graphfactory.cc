@@ -23,6 +23,7 @@ Graph* GraphFactory::readGraphFromFile (char* input_file_name) {
 
     Graph* G = new Graph();
     G->adj_ = vector<list<int> >(V);
+    G->V_ = V;
 
     int cst = 0;
     Log& l = Log::getInstance ();
@@ -30,8 +31,10 @@ Graph* GraphFactory::readGraphFromFile (char* input_file_name) {
         std::stringstream ss;
         for (int j = 0; j < V; j++){
             fscanf (arquivo_entrada, "%d", &cst);
-            if (cst)
-                G->adj_[i].push_back (cst);
+            if (cst) {
+                G->adj_[i].push_back (j);
+                G->A_++;
+            }
             ss << cst << " ";
         }
         l.info (ss);
