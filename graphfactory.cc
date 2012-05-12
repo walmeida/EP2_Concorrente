@@ -4,11 +4,6 @@
 using std::vector;
 
 Graph GraphFactory::readGraphFromFile (char* nome_arquivo_entrada) {
-    //TODO arrumar
-    int debug_mode = 0;
-
-    if(debug_mode) printf("Debug Mode: On\n"); else printf("Debug Mode: Off\n");
-
     FILE* arquivo_entrada = fopen (nome_arquivo_entrada, "r");
     if (arquivo_entrada == NULL){ 
       printf("Nao foi possivel abrir o arquivo de entrada"); 

@@ -5,8 +5,8 @@
 #include "graph.h"
 #include "queue.h"
 #include "graphfactory.h"
+#include "log.h"
 
-int debug_mode;
 int n;
 char* nome_arquivo_entrada;
 Graph G;
@@ -24,7 +24,8 @@ void leitura_entrada(int argc, char* argv[]){
     nome_arquivo_entrada = argv[2];
         
     if(argc > 3){
-      if(strcmp("-debug",argv[3])==0) debug_mode = 1;
+        bool debug_mode = (strcmp("-debug",argv[3]) == 0);
+        Log::setDebugMode(debug_mode);
     }
 }
 
