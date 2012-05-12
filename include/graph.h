@@ -22,4 +22,4 @@ void DIGRAPHinsertA (Digraph G, Vertex v, Vertex w, double cst);
 void GRAPHinsertE (Graph G, Vertex v, Vertex w, double cst);
 void DIGRAPHdestroy (Digraph G, int V);
 
-#endif // GRAFO_H_INCLUDED
+#endif
