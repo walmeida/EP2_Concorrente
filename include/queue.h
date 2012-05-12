@@ -1,7 +1,6 @@
 #ifndef QUEUE_H_
 #define QUEUE_H_
 
-//typedef caminho Item;
 typedef int Item;
 
 /* FIFO queue */

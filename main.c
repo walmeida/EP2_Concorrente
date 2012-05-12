@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "graph.h"
 #include "queue.h"
-#include "grafo.h"
 
 int debug_mode;
 int n;
@@ -12,7 +12,7 @@ Graph G;
 queue *caminhos_minimos;
 queue caminhos;         
 
-//ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug]
+/* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 void leitura_entrada(int argc, char* argv[]){
     if(argc < 3){
       printf("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");
