@@ -23,7 +23,7 @@ void leitura_entrada(int argc, char* argv[]){
     
     arquivo_entrada = fopen(argv[2],"r");
     if(arquivo_entrada == NULL){ 
-      printf("Nao foi possivel abrir o arquivo de entrada"); 
+      printf("Nao foi possivel abrir o arquivo de entrada\n"); 
       exit(-1);
     }
         
