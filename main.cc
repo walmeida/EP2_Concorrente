@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "graph.h"
 #include "queue.h"
+#include "graphbuilder.h"
 
 int debug_mode;
 int n;
@@ -32,37 +33,8 @@ void leitura_entrada(int argc, char* argv[]){
     }
 }
 
-int constroi_grafo(){
-  int i,j,cst,V;
-  char c;
-  
-  
-  if(debug_mode) printf("Debug Mode: On\n"); else printf("Debug Mode: Off\n");
-  
-  V = 0;
-  c = '0';
-  
-  while( (c = getc(arquivo_entrada)) && (c!= '\n') ){
-    if(c == '0' || c == '1') V++;
-  }
-
-  fseek(arquivo_entrada, 0, SEEK_SET);
-  
-  G = GRAPHinit(V);
-  
-  for(i = 0; i < V; i++){
-    for(j = 0; j < V; j++){
-      fscanf(arquivo_entrada, "%d", &cst);
-      G->adj[i][j] = cst;
-      printf("%d ",cst);
-    }
-    printf("\n");
-  }
-  
-  fclose(arquivo_entrada);
-  
-  return V;
-      
+void constroi_grafo(){
+    G = GraphBuilder::readGraphFromFile (arquivo_entrada); 
 }
 
 int numeroDeProcessadores(){
@@ -73,12 +45,9 @@ int numeroDeProcessadores(){
 }
 
 int main(int argc, char* argv[]){
-  int V;
-  
   leitura_entrada(argc,argv);
-  V = constroi_grafo();
+  constroi_grafo();
   printf("Numero de Processadores On: %d\n",numeroDeProcessadores());
-  GRAPHdestroy(G, V);
   
   return 0;
 }

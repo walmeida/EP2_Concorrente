@@ -2,19 +2,19 @@ IDIR = ./include
 ODIR = obj
 BDIR = bin
 
-CC = gcc
-CFLAGS = -ansi -Wall -I$(IDIR) -g
+CC = g++
+CFLAGS = -Wall -I$(IDIR) -g
 LIBS = -lpthread
 
 EXE = caminhosminimos
 
-_DEPS = graph.h queue.h
+_DEPS = graph.h queue.h graphbuilder.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o queue.o graph.o
+_OBJ = main.o queue.o graph.o graphbuilder.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-$(ODIR)/%.o: %.c $(DEPS)
+$(ODIR)/%.o: %.cc $(DEPS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(BDIR)/$(EXE): $(OBJ)
