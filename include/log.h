@@ -3,15 +3,16 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 
 class Log {
     private:
-        static Log* instance_;
         static bool debug_mode_;
         Log () {};
         ~Log () {};
     public:
         static Log& getInstance () {
+            static Log* instance_ = 0;
             if (!instance_) instance_ = new Log();
             return *instance_;
         }
@@ -22,8 +23,20 @@ class Log {
             if (debug_mode_)
                 std::cout << "DEBUG: " << message << std::endl;
         }
+        void debug (std::stringstream &message) {
+            debug (message.str());
+        }
+        void info (std::string message) {
+            std::cout << "INFO:  " << message << std::endl;
+        }
+        void info (std::stringstream &message) {
+            info (message.str());
+        }
         void error (std::string message) {
             std::cout << "ERROR: " << message << std::endl;
+        }
+        void error (std::stringstream &message) {
+            error (message.str());
         }
 };
 

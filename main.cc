@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 #include <unistd.h>
 #include "graph.h"
 #include "queue.h"
@@ -13,11 +14,12 @@ char* nome_arquivo_entrada;
 Graph G;
 Queue<int> *caminhos_minimos;
 Queue<int> caminhos;         
+Log& l = Log::getInstance ();
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 void leitura_entrada(int argc, char* argv[]){
     if(argc < 3){
-      printf("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");
+      l.error ("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");
       exit(-1);
     }
     
@@ -30,17 +32,18 @@ void leitura_entrada(int argc, char* argv[]){
     }
 }
 
-int numeroDeProcessadores(){
+int numeroDeProcessadores () {
   int num = sysconf(_SC_NPROCESSORS_ONLN);
   if (num < 2) num = 2;
   return num;
 }
 
-int main(int argc, char* argv[]){
-
-  leitura_entrada(argc,argv);
+int main (int argc, char* argv[]) {
+  leitura_entrada (argc,argv);
   G = GraphFactory::readGraphFromFile (nome_arquivo_entrada); 
-  printf("Numero de Processadores On: %d\n",numeroDeProcessadores());
+  std::stringstream message;
+  message << "Numero de Processadores On: " << numeroDeProcessadores();
+  l.info (message);
   
   return 0;
 }
