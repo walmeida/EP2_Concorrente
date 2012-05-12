@@ -10,8 +10,8 @@ int debug_mode;
 int n;
 FILE * arquivo_entrada;
 Graph G;
-queue *caminhos_minimos;
-queue caminhos;         
+Queue<int> *caminhos_minimos;
+Queue<int> caminhos;         
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 void leitura_entrada(int argc, char* argv[]){

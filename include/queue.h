@@ -1,39 +1,58 @@
 #ifndef QUEUE_H_
 #define QUEUE_H_
 
-typedef int Item;
+#include <list>
+#include <pthread.h>
 
 /* FIFO queue */
+template<class T>
+class Queue {
+    private:
+        std::list<T> items_;
+        unsigned long size_;
+        pthread_mutex_t mutex_;
+    public:
+        Queue ();
+        ~Queue ();
+        void atomicInsert (T elem);
+        T atomicRemove ();
+        unsigned long size ();
+};
 
-typedef struct node {
-    struct node *next;
-    Item *data;
-} node;
+template<class T>
+Queue<T>::Queue () : size_(0) {
+    pthread_mutex_init (&mutex_, NULL);
+}
 
-typedef struct queue {
-    node *head, *tail; 
-    int size;
-} queue;
+template<class T>
+Queue<T>::~Queue () {
+    pthread_mutex_destroy (&mutex_);
+}
 
-/* Inicializa uma queue */
-void queue_init(queue *root);
-/* Libera memoria consumida pela queue.
- * Nao libera memoria dos itens (data) inseridos
- */
-void queue_destroy(queue *root);
-/* Insere um item no final da queue */
-void queue_put(queue *root, Item *data);
-/* Retorna um item do comeco da queue */
-Item *queue_get(queue *root);
-/* Remove um item da queue */
-void queue_remove(queue *root, Item *data);
-/* Retorna o numero de elementos na queue */
-int queue_size(queue *root);
-/* Retorna um iterador para os elementos da queue */
-void *queue_get_iterator(queue *root);
-/* Recebe um iterador para a queue e devolove o item desta posicao */
-Item * queue_get_iterator_data (void * iterator);
-/* Retorna um iterador para a proxima posicao da queue */
-void *queue_iterator_next(void *iterator);
+template<class T>
+void Queue<T>::atomicInsert (T elem) {
+    pthread_mutex_lock (&mutex_);
+    items_.push_back (elem);
+    size_++;
+    pthread_mutex_unlock (&mutex_);
+}
 
-#endif
+template<class T>
+T Queue<T>::atomicRemove () {
+    pthread_mutex_lock (&mutex_);
+    T elem = items_.pop_front ();
+    size_--;
+    pthread_mutex_unlock (&mutex_);
+    return elem;
+}
+
+template<class T>
+unsigned long Queue<T>::size () {
+    unsigned long size;
+    pthread_mutex_lock (&mutex_);
+    size = size_;
+    pthread_mutex_unlock (&mutex_);
+    return size;
+}
+
+#endif // QUEUE_H_

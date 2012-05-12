@@ -11,7 +11,7 @@ EXE = caminhosminimos
 _DEPS = graph.h queue.h graphbuilder.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o queue.o graph.o graphbuilder.o
+_OBJ = main.o graph.o graphbuilder.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cc $(DEPS)
