@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "queue.h"
 #include "grafo.h"
 
 int debug_mode;
 int n;
 FILE * arquivo_entrada;
 Graph G;
+queue *caminhos_minimos;         
 
 //ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug]
 void leitura_entrada(int argc, char* argv[]){
