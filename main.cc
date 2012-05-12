@@ -34,17 +34,17 @@ void read_parameters(int argc, char* argv[]){
 }
 
 int numberOfProcessors () {
-  int num = sysconf(_SC_NPROCESSORS_ONLN);
-  if (num < 2) num = 2;
-  return num;
+    int num = sysconf(_SC_NPROCESSORS_ONLN);
+    if (num < 2) num = 2;
+    return num;
 }
 
 int main (int argc, char* argv[]) {
-  read_parameters (argc,argv);
-  G = GraphFactory::readGraphFromFile (input_file_name); 
-  std::stringstream message;
-  message << "Numero de Processadores On: " << numberOfProcessors();
-  l.info (message);
-  
-  return 0;
+    read_parameters (argc,argv);
+    G = GraphFactory::readGraphFromFile (input_file_name); 
+    std::stringstream message;
+    message << "Numero de Processadores On: " << numberOfProcessors();
+    l.info (message);
+
+    return 0;
 }
