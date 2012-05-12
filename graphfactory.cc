@@ -1,14 +1,16 @@
 #include "graphfactory.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "log.h"
 
 using std::vector;
 
 Graph GraphFactory::readGraphFromFile (char* nome_arquivo_entrada) {
     FILE* arquivo_entrada = fopen (nome_arquivo_entrada, "r");
-    if (arquivo_entrada == NULL){ 
-      printf("Nao foi possivel abrir o arquivo de entrada"); 
-      exit(-1);
+    if (arquivo_entrada == NULL){
+        Log& l = Log::getInstance ();
+        l.error ("Nao foi possivel abrir o arquivo de entrada"); 
+        exit(-1);
     }
 
     int V = 0;
@@ -25,13 +27,15 @@ Graph GraphFactory::readGraphFromFile (char* nome_arquivo_entrada) {
         *it = vector<int>(V);
     }
     int cst = 0;
+    Log& l = Log::getInstance ();
     for (int i = 0; i < V; i++){
+        std::stringstream ss;
         for (int j = 0; j < V; j++){
             fscanf (arquivo_entrada, "%d", &cst);
             G.adj_[i][j] = cst;
-            printf ("%d ",cst);
+            ss << cst << " ";
         }
-        printf ("\n");
+        l.info (ss);
     }
 
     fclose (arquivo_entrada);
