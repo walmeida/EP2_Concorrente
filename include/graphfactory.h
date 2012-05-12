@@ -5,7 +5,7 @@
 
 class GraphFactory {
     public:
-        static Graph readGraphFromFile (char* nome_arquivo_entrada);
+        static Graph readGraphFromFile (char* input_file_name);
 };
 
 #endif

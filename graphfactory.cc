@@ -5,8 +5,8 @@
 
 using std::vector;
 
-Graph GraphFactory::readGraphFromFile (char* nome_arquivo_entrada) {
-    FILE* arquivo_entrada = fopen (nome_arquivo_entrada, "r");
+Graph GraphFactory::readGraphFromFile (char* input_file_name) {
+    FILE* arquivo_entrada = fopen (input_file_name, "r");
     if (arquivo_entrada == NULL){
         Log& l = Log::getInstance ();
         l.error ("Nao foi possivel abrir o arquivo de entrada"); 
