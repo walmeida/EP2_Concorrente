@@ -18,7 +18,6 @@ void Path::insertVertex (Vertex v) {
     ++size_;
 }
 
-
 int Path::size () {
     return size_;
 }

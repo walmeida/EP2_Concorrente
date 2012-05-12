@@ -11,7 +11,7 @@
 
 int n;
 char* input_file_name;
-Graph G;
+Graph* G = NULL;
 Queue<int> *shortest_paths;
 Queue<int> paths;         
 int num_finished_vertex;
