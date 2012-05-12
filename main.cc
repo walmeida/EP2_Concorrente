@@ -5,6 +5,7 @@
 #include "graph.h"
 #include "queue.h"
 #include "graphbuilder.h"
+#include "path.h"
 
 int debug_mode;
 int n;
@@ -45,6 +46,7 @@ int numeroDeProcessadores(){
 }
 
 int main(int argc, char* argv[]){
+
   leitura_entrada(argc,argv);
   constroi_grafo();
   printf("Numero de Processadores On: %d\n",numeroDeProcessadores());
