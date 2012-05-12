@@ -41,7 +41,8 @@ void Queue<T>::atomicInsert (T elem) {
 template<class T>
 T Queue<T>::atomicRemove () {
     pthread_mutex_lock (&mutex_);
-    T elem = items_.pop_front ();
+    T elem = items_.front ();
+    items_.pop_front ();
     size_--;
     pthread_mutex_unlock (&mutex_);
     return elem;
