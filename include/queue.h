@@ -17,6 +17,7 @@ class Queue {
         void atomicInsert (T elem);
         T atomicRemove ();
         unsigned long size ();
+        bool empty ();
 };
 
 template<class T>
@@ -53,6 +54,15 @@ unsigned long Queue<T>::size () {
     size = size_;
     pthread_mutex_unlock (&mutex_);
     return size;
+}
+
+template<class T>
+bool Queue<T>::empty () {
+    bool empty;
+    pthread_mutex_lock (&mutex_);
+    empty = items_.empty();
+    pthread_mutex_unlock (&mutex_);
+    return empty;
 }
 
 #endif // QUEUE_H_
