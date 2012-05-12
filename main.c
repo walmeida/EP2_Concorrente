@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "grafo.h"
+#include "graph.h"
 
 int debug_mode;
 int n;
 FILE * arquivo_entrada;
 Graph G;
 
-//ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug]
+/* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 void leitura_entrada(int argc, char* argv[]){
     if(argc < 3){
       printf("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");

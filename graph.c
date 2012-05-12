@@ -1,4 +1,4 @@
-#include "grafo.h" 
+#include "graph.h" 
 double maxcst; // A ser definido dinammicamente
 
 Digraph DIGRAPHinit (int V){
@@ -8,8 +8,8 @@ Digraph DIGRAPHinit (int V){
 	G = malloc(sizeof *G);
 	G->V = V;
 	G->A = 0;
-	G->adj = malloc(V * sizeof(int *));
-	for (i = 0; i < V; i++)
+    G->adj = malloc(V * sizeof(int *));
+    for (i = 0; i < V; i++)
     G->adj[i] = malloc(V * sizeof(int));
 
    	for (i = 0; i < V; i++)
@@ -42,35 +42,3 @@ void GRAPHinsertE (Graph G, Vertex v, Vertex w, double cst){
 	DIGRAPHinsertA (G,w,v,cst);
 }
 
-
-/*void PQinit(int maxN) {
-    q=(Vertex*)malloc(maxN*sizeof(Vertex));
-    inicio = 0;
-    fim = 0;
-}
-
-int PQempty() {
-    return inicio==fim;
-}
-
-void PQinsert(Vertex v){
-    q[fim++] = v;
-}
-
-Vertex PQdelmin() {
-    int i, j; Vertex x;
-    i = inicio;
-    for (j=i+1; j < fim; j++)
-        if (cst[q[i]] > cst[q[j]]) i = j;
-    x = q[i];
-    q[i] = q[--fim];
-    return x;
-}
-
-void PQdec(Vertexv) {
-     //faz nada xD 
-}
-
-void PQfree() {
-    free(q);
-}*/
