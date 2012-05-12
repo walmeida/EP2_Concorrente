@@ -2,6 +2,7 @@
 #define GRAPHBUILDER_H_INCLUDED
 
 #include <stdio.h>
+#include "graph.h"
 
 class GraphBuilder {
     public:

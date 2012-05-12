@@ -2,7 +2,7 @@
 
 using std::vector;
 
-GraphBuilder::readGraphFromInput (FILE* arquivo_entrada) {
+Graph GraphBuilder::readGraphFromFile (FILE* arquivo_entrada) {
     //TODO arrumar
     int debug_mode = 0;
 
@@ -16,8 +16,8 @@ GraphBuilder::readGraphFromInput (FILE* arquivo_entrada) {
     fseek(arquivo_entrada, 0, SEEK_SET);
 
     Graph G = Graph();
-    G.adj_ = vector<int>(V);
-    for (vector<int>iterator it = G.adj_.begin();
+    G.adj_ = vector<vector<int> >(V);
+    for (vector<vector<int> >::iterator it = G.adj_.begin();
             it != G.adj_.end(); ++it) {
         *it = vector<int>(V);
     }

@@ -33,7 +33,7 @@ void leitura_entrada(int argc, char* argv[]){
     }
 }
 
-int constroi_grafo(){
+void constroi_grafo(){
     G = GraphBuilder::readGraphFromFile (arquivo_entrada); 
 }
 
@@ -45,10 +45,8 @@ int numeroDeProcessadores(){
 }
 
 int main(int argc, char* argv[]){
-  int V;
-  
   leitura_entrada(argc,argv);
-  V = constroi_grafo();
+  constroi_grafo();
   printf("Numero de Processadores On: %d\n",numeroDeProcessadores());
   
   return 0;
