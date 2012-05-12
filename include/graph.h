@@ -15,7 +15,7 @@ class Digraph {
         ~Digraph ();
         void insertArc (Vertex v, Vertex w, double cst);
         void insertEdge (Vertex v, Vertex w, double cst);
-        friend class GraphBuilder;
+        friend class GraphFactory;
 };
 typedef Digraph Graph;
 

@@ -1,12 +1,19 @@
-#include "graphbuilder.h"
+#include "graphfactory.h"
+#include <stdio.h>
 
 using std::vector;
 
-Graph GraphBuilder::readGraphFromFile (FILE* arquivo_entrada) {
+Graph GraphFactory::readGraphFromFile (char* nome_arquivo_entrada) {
     //TODO arrumar
     int debug_mode = 0;
 
     if(debug_mode) printf("Debug Mode: On\n"); else printf("Debug Mode: Off\n");
+
+    FILE* arquivo_entrada = fopen (nome_arquivo_entrada, "r");
+    if (arquivo_entrada == NULL){ 
+      printf("Nao foi possivel abrir o arquivo de entrada"); 
+      exit(-1);
+    }
 
     int V = 0;
     char c = '0';
@@ -22,16 +29,16 @@ Graph GraphBuilder::readGraphFromFile (FILE* arquivo_entrada) {
         *it = vector<int>(V);
     }
     int cst = 0;
-    for(int i = 0; i < V; i++){
-        for(int j = 0; j < V; j++){
-            fscanf(arquivo_entrada, "%d", &cst);
+    for (int i = 0; i < V; i++){
+        for (int j = 0; j < V; j++){
+            fscanf (arquivo_entrada, "%d", &cst);
             G.adj_[i][j] = cst;
-            printf("%d ",cst);
+            printf ("%d ",cst);
         }
-        printf("\n");
+        printf ("\n");
     }
 
-    fclose(arquivo_entrada);
+    fclose (arquivo_entrada);
 
     return G;
 }
