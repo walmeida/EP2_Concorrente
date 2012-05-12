@@ -1,6 +1,8 @@
 #ifndef GRAFO_H_INCLUDED
 #define GRAFO_H_INCLUDED
 
+#include <stdlib.h>
+
 #define Vertex int
 #define Edge Arc
 #define EDGE ARC
@@ -10,12 +12,12 @@
 #define GRAPHdestroy DIGRAPHdestroy
 
 /* Para o dijkstra */
-Vertex parnt[maxV];
-double cst[maxV];
+//Vertex parnt[maxV];
+//double cst[maxV];
 
 /* Fila */
-Vertex *q;
-int inicio, fim;
+//Vertex *q;
+//int inicio, fim;
 
 typedef struct digraph{
 	int V;
@@ -23,22 +25,22 @@ typedef struct digraph{
 	int **adj;
 }*Digraph;
 
-typedef struct {
+/*typedef struct {
   Vertex v;
   Vertex w;
   double cst;
-} Arc;
+} Arc;*/
 
 Digraph DIGRAPHinit (int V);
 void DIGRAPHinsertA (Digraph G, Vertex v, Vertex w, double cst);
 void GRAPHinsertE (Graph G, Vertex v, Vertex w, double cst);
 void DIGRAPHdestroy (Digraph G, int V);
 
-void PQinit(int maxN);
+/*void PQinit(int maxN);
 int PQempty();
 Vertex PQdelmin();
 void PQdec(Vertexv);
-void PQfree();
+void PQfree();*/
 
 
 #endif // GRAFO_H_INCLUDED
