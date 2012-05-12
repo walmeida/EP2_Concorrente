@@ -10,21 +10,22 @@
 #include "log.h"
 
 int n;
-char* nome_arquivo_entrada;
+char* input_file_name;
 Graph G;
-Queue<int> *caminhos_minimos;
-Queue<int> caminhos;         
+Queue<int> *shortest_paths;
+Queue<int> paths;         
+int num_finished_vertex;
 Log& l = Log::getInstance ();
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
-void leitura_entrada(int argc, char* argv[]){
+void read_parameters(int argc, char* argv[]){
     if(argc < 3){
       l.error ("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");
       exit(-1);
     }
     
     n = atoi(argv[1]);
-    nome_arquivo_entrada = argv[2];
+    input_file_name = argv[2];
         
     if(argc > 3){
         bool debug_mode = (strcmp("-debug",argv[3]) == 0);
@@ -32,17 +33,17 @@ void leitura_entrada(int argc, char* argv[]){
     }
 }
 
-int numeroDeProcessadores () {
+int numberOfProcessors () {
   int num = sysconf(_SC_NPROCESSORS_ONLN);
   if (num < 2) num = 2;
   return num;
 }
 
 int main (int argc, char* argv[]) {
-  leitura_entrada (argc,argv);
-  G = GraphFactory::readGraphFromFile (nome_arquivo_entrada); 
+  read_parameters (argc,argv);
+  G = GraphFactory::readGraphFromFile (input_file_name); 
   std::stringstream message;
-  message << "Numero de Processadores On: " << numeroDeProcessadores();
+  message << "Numero de Processadores On: " << numberOfProcessors();
   l.info (message);
   
   return 0;
