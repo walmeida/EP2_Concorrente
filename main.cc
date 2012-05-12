@@ -10,7 +10,6 @@
 #include "log.h"
 
 int n;
-char* input_file_name;
 Graph* G = NULL;
 Queue<int> *shortest_paths;
 Queue<int> paths;         
@@ -18,19 +17,21 @@ int num_finished_vertex;
 Log& l = Log::getInstance ();
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
-void read_parameters(int argc, char* argv[]){
+char* read_parameters(int argc, char* argv[]){
     if(argc < 3){
       l.error ("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");
       exit(-1);
     }
     
     n = atoi(argv[1]);
-    input_file_name = argv[2];
+    char* input_file_name = argv[2];
         
     if(argc > 3){
         bool debug_mode = (strcmp("-debug",argv[3]) == 0);
         Log::setDebugMode(debug_mode);
     }
+
+    return input_file_name;
 }
 
 int numberOfProcessors () {
@@ -40,7 +41,7 @@ int numberOfProcessors () {
 }
 
 int main (int argc, char* argv[]) {
-    read_parameters (argc,argv);
+    char* input_file_name = read_parameters (argc,argv);
     G = GraphFactory::readGraphFromFile (input_file_name); 
     std::stringstream message;
     message << "Numero de Processadores On: " << numberOfProcessors();
