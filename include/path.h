@@ -7,12 +7,14 @@
 class Path {
     private:
         std::list<Vertex> path_;
+        unsigned long size_;
     public:
         Path ();
         ~Path ();
         bool containsVertex (Vertex v);
         void insertVertex (Vertex v);
         int size ();
+        Path& operator= (const Path &rhs);
 };
 
-#endif
+#endif // PATH_H_
