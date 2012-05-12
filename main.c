@@ -71,6 +71,7 @@ int numeroDeProcessadores(){
 
 int main(int argc, char* argv[]){
   int V;
+  
   leitura_entrada(argc,argv);
   V = constroi_grafo();
   printf("Numero de Processadores On: %d\n",numeroDeProcessadores());
