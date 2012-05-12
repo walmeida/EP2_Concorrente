@@ -8,10 +8,10 @@ LIBS = -lpthread
 
 EXE = caminhosminimos
 
-_DEPS = graph.h queue.h graphbuilder.h
+_DEPS = graph.h queue.h graphbuilder.h barrier.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o graph.o graphbuilder.o
+_OBJ = main.o graph.o graphbuilder.o barrier.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cc $(DEPS)
