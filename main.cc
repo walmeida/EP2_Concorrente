@@ -11,8 +11,7 @@
 #include "log.h"
 
 int n;
-char* input_file_name;
-Graph G;
+Graph* G = NULL;
 Queue<int> *shortest_paths;
 Queue<int> paths;         
 int num_finished_vertex;
@@ -21,25 +20,27 @@ Log& l = Log::getInstance ();
 pthread_t *programthread;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
-void read_parameters(int argc, char* argv[]){
+char* read_parameters(int argc, char* argv[]){
     if(argc < 3){
       l.error ("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");
       exit(-1);
     }
     
     n = atoi(argv[1]);
-    input_file_name = argv[2];
+    char* input_file_name = argv[2];
         
     if(argc > 3){
         bool debug_mode = (strcmp("-debug",argv[3]) == 0);
         Log::setDebugMode(debug_mode);
     }
+
+    return input_file_name;
 }
 
 int numberOfProcessors () {
-  int num = sysconf(_SC_NPROCESSORS_ONLN);
-  if (num < 2) num = 2;
-  return num;
+    int num = sysconf(_SC_NPROCESSORS_ONLN);
+    if (num < 2) num = 2;
+    return num;
 }
 
 void *dummy_function(void *arg) {
@@ -69,7 +70,7 @@ bool create_program_threads(int num_proc){
 int main (int argc, char* argv[]) {
   int num_proc;
   
-  read_parameters (argc,argv);
+  char* input_file_name = read_parameters (argc,argv);
   G = GraphFactory::readGraphFromFile (input_file_name); 
   std::stringstream message;
   num_proc = numberOfProcessors();
@@ -88,8 +89,9 @@ int main (int argc, char* argv[]) {
     }
   }
   
-  /*TODO: free aqui não xD */
+  /*TODO: free aqui ??xD */
   free(programthread);
    
   return 0;
+  
 }

@@ -4,8 +4,9 @@
 #include "log.h"
 
 using std::vector;
+using std::list;
 
-Graph GraphFactory::readGraphFromFile (char* input_file_name) {
+Graph* GraphFactory::readGraphFromFile (char* input_file_name) {
     FILE* arquivo_entrada = fopen (input_file_name, "r");
     if (arquivo_entrada == NULL){
         Log& l = Log::getInstance ();
@@ -20,19 +21,20 @@ Graph GraphFactory::readGraphFromFile (char* input_file_name) {
     }
     fseek(arquivo_entrada, 0, SEEK_SET);
 
-    Graph G = Graph();
-    G.adj_ = vector<vector<int> >(V);
-    for (vector<vector<int> >::iterator it = G.adj_.begin();
-            it != G.adj_.end(); ++it) {
-        *it = vector<int>(V);
-    }
+    Graph* G = new Graph();
+    G->adj_ = vector<list<int> >(V);
+    G->V_ = V;
+
     int cst = 0;
     Log& l = Log::getInstance ();
     for (int i = 0; i < V; i++){
         std::stringstream ss;
         for (int j = 0; j < V; j++){
             fscanf (arquivo_entrada, "%d", &cst);
-            G.adj_[i][j] = cst;
+            if (cst) {
+                G->adj_[i].push_back (j);
+                G->A_++;
+            }
             ss << cst << " ";
         }
         l.info (ss);
