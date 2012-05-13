@@ -7,6 +7,7 @@ class ThreadManager {
     private:
         int num_threads_;
         pthread_t* programthread_;
+        int *thread_ids_;
         bool createProgramThreads (void* (*thread_function) (void*));
         void joinThreads ();
     public:

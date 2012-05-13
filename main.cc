@@ -10,6 +10,7 @@
 #include "log.h"
 #include "threadmanager.h"
 #include "queuecond.h"
+#include "barrier.h"
 
 unsigned int n;
 Graph* G = NULL;
@@ -17,6 +18,7 @@ Queue<Path*> *shortest_paths;
 Queue<Path*> paths;         
 int num_finished_vertex = 0;
 Log& l = Log::getInstance ();
+Barrier *barrier = NULL;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 char* read_parameters(int argc, char* argv[]){
@@ -43,6 +45,7 @@ int numberOfProcessors () {
 }
 
 void *find_path (void *arg) {
+    const int *thread_id = (int *) arg;
     const int num_finished_vertex_final = G->numVertex () - 1; // subtract 1 because of vertex 0
     QueueCond cond (1);
     while (!paths.empty () && (num_finished_vertex < num_finished_vertex_final)){
@@ -73,14 +76,7 @@ void *find_path (void *arg) {
         }
         cond.incrementSizeCondition ();
         // Barreira
-    }
-    return NULL;
-}
-
-void *dummy_function(void *arg) {
-  for (int i=0; i<5; ++i) {
-        printf("Hi!\n");
-        sleep(1);
+        barrier->sync (*thread_id);
     }
     return NULL;
 }
@@ -97,10 +93,13 @@ int main (int argc, char* argv[]) {
     Path *path_zero = new Path ();
     path_zero->insertVertex(0);
     paths.atomicInsert (path_zero);
+
+    shortest_paths = new Queue<Path*>[G->numVertex ()];
     
     /* Threads */
-    ThreadManager tm(num_proc);
-    tm.createAndRunThreads (dummy_function);
+    barrier = new Barrier (num_proc);
+    ThreadManager tm (num_proc);
+    tm.createAndRunThreads (find_path);
 
     return 0;
 }
