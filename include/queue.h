@@ -17,6 +17,7 @@ class Queue {
         unsigned long atomicInsert (T elem);
         template<class B>
         bool atomicRemove (B& condition, T& elem);
+        bool remove (T& elem);
         unsigned long size ();
         bool empty ();
 };
@@ -55,6 +56,18 @@ bool Queue<T>::atomicRemove (B& condition, T& elem) {
         }
     }
     pthread_mutex_unlock (&mutex_);
+    return success;
+}
+
+template<class T>
+bool Queue<T>::remove (T& elem) {
+    bool success = false;
+    if (size_ != 0) {
+        elem = items_.front ();
+        items_.pop_front ();
+        size_--;
+        success = true;
+    }
     return success;
 }
 

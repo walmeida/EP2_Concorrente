@@ -97,6 +97,17 @@ void *find_path (void *arg) {
     return NULL;
 }
 
+void free_memory () {
+    Path *p;
+    bool has_elements = paths.remove (p);
+    while (has_elements) {
+        delete p;
+        has_elements = paths.remove (p);
+    }
+
+    delete[] shortest_paths;
+}   
+
 int main (int argc, char* argv[]) {
     char* input_file_name = read_parameters (argc,argv);
     G = GraphFactory::readGraphFromFile (input_file_name); 
@@ -117,7 +128,7 @@ int main (int argc, char* argv[]) {
     ThreadManager tm (num_proc);
     tm.createAndRunThreads (find_path);
 
-    delete[] shortest_paths;
+    free_memory ();
 
     return 0;
 }
