@@ -28,7 +28,7 @@ Graph* GraphFactory::readGraphFromFile (char* input_file_name) {
     int cst = 0;
     Log& l = Log::getInstance ();
     for (int i = 0; i < V; i++){
-        std::stringstream ss;
+        std::ostringstream ss;
         for (int j = 0; j < V; j++){
             fscanf (arquivo_entrada, "%d", &cst);
             if (cst) {

@@ -25,21 +25,21 @@ class Log {
                 std::cout << message << std::endl;
             }
         }
-        void debug (std::stringstream &message) {
+        void debug (std::ostringstream &message) {
             debug (message.str());
         }
         void info (std::string message) {
             message = "INFO:  " + message;
             std::cout << message << std::endl;
         }
-        void info (std::stringstream &message) {
+        void info (std::ostringstream &message) {
             info (message.str());
         }
         void error (std::string message) {
             message = "ERROR: " + message;
             std::cout << message << std::endl;
         }
-        void error (std::stringstream &message) {
+        void error (std::ostringstream &message) {
             error (message.str());
         }
 };

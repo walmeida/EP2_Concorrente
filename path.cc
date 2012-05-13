@@ -1,7 +1,7 @@
 #include "path.h" 
 
 using std::list;
-using std::stringstream;
+using std::ostringstream;
 
 Path::Path () : size_(0) {};
 Path::Path (const Path& p) : path_(p.path_), size_(p.size_) {};
@@ -34,7 +34,7 @@ Vertex Path::lastVertex () const {
     return path_.back ();
 }
 
-void Path::print (stringstream &ss) const {
+void Path::print (ostringstream &ss) const {
     ss << "(" << size_ - 1 << ") 0";
     for (list<Vertex>::const_iterator it = ++(path_.begin()); it != path_.end(); ++it){
         ss << " - " << *it;

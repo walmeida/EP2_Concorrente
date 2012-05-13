@@ -14,6 +14,8 @@ class Queue {
     public:
         Queue ();
         ~Queue ();
+        typename std::list<T>::const_iterator begin () const;
+        typename std::list<T>::const_iterator end () const;
         unsigned long atomicInsert (T elem);
         template<class B>
         bool atomicRemove (B& condition, T& elem);
@@ -30,6 +32,16 @@ Queue<T>::Queue () : size_(0) {
 template<class T>
 Queue<T>::~Queue () {
     pthread_mutex_destroy (&mutex_);
+}
+
+template<class T>
+typename std::list<T>::const_iterator Queue<T>::begin () const {
+    return items_.begin ();
+}
+
+template<class T>
+typename std::list<T>::const_iterator Queue<T>::end () const {
+    return items_.end ();
 }
 
 template<class T>

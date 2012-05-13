@@ -19,6 +19,7 @@ Queue<Path*> paths;
 int num_finished_vertex = 0;
 Log& l = Log::getInstance ();
 Barrier *barrier = NULL;
+bool debug_mode = false;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 char* read_parameters(int argc, char* argv[]){
@@ -31,7 +32,7 @@ char* read_parameters(int argc, char* argv[]){
     char* input_file_name = argv[2];
         
     if(argc > 3){
-        bool debug_mode = (strcmp("-debug",argv[3]) == 0);
+        debug_mode = (strcmp("-debug",argv[3]) == 0);
         Log::setDebugMode(debug_mode);
     }
 
@@ -44,6 +45,22 @@ int numberOfProcessors () {
     return num;
 }
 
+void printPaths () {
+    std::ostringstream ss;
+    for (int v = 1; v < G->numVertex (); ++v) {
+        ss << "Para o vertice " << v << ":\n";
+        l.info (ss);
+        const std::list<Path*>::const_iterator end = shortest_paths[v].end ();
+        for (std::list<Path*>::const_iterator it = shortest_paths[v].begin ();
+                it != end; ++it) {
+            ss.clear ();
+            (*it)->print (ss);
+            l.info (ss);
+        }
+        l.info ("\n");
+    }
+}
+
 void *find_path (void *arg) {
     const int *thread_id = (int *) arg;
     const int num_finished_vertex_final = G->numVertex () - 1; // subtract 1 because of vertex 0
@@ -54,7 +71,7 @@ void *find_path (void *arg) {
         printf ("num finished vertex = %d of %d\n", num_finished_vertex, num_finished_vertex_final);
         while (has_paths_to_proccess) {
             printf ("Thread %d processando mais um caminho\n", *thread_id);
-             std::stringstream ss;
+             std::ostringstream ss;
              path_current->print (ss);
              ss << " (thread " << *thread_id << ")\n";
              std::cout << ss.str();
@@ -86,10 +103,12 @@ void *find_path (void *arg) {
         }
         cond.incrementSizeCondition ();
         // Barreira
-        std::stringstream ss;
-        ss << "Iteracao " << cond.getSizeCondition ();
-        ss << ": Thread " << *thread_id << " chegou na barreira";
-        l.debug (ss);
+        if (debug_mode) {
+            std::ostringstream ss;
+            ss << "Iteracao " << cond.getSizeCondition ();
+            ss << ": Thread " << *thread_id << " chegou na barreira";
+            l.debug (ss);
+        }
         barrier->sync (*thread_id);
         printf ("Thread %d passou pela barreira\n", *thread_id);
     }
@@ -119,7 +138,7 @@ void free_memory () {
 int main (int argc, char* argv[]) {
     char* input_file_name = read_parameters (argc,argv);
     G = GraphFactory::readGraphFromFile (input_file_name); 
-    std::stringstream message;
+    std::ostringstream message;
     int num_proc = numberOfProcessors();
     message << "Numero de Processadores On: " << num_proc;
     l.info (message);

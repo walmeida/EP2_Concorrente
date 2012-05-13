@@ -19,7 +19,7 @@ class Path {
         int size () const;
         Path& operator= (const Path &rhs);
         Vertex lastVertex () const;
-        void print (std::stringstream &ss) const;
+        void print (std::ostringstream &ss) const;
 };
 
 #endif // PATH_H_
