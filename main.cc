@@ -52,6 +52,13 @@ void *find_path (void *arg) {
         Path **next_path = paths.atomicRemove (cond);
         while (next_path != NULL) {
             const Path *path_current = *next_path;
+            if (path_current == NULL) {
+                l.error ("!!!!!!!!!!!!!!!!!!!!OH OH!!!!!!!!!!!!!!!!");
+                break;
+            } else {
+                printf ("Thread %d processando mais um caminho\n", *thread_id);
+                path_current->print ();
+            }
             const Vertex v = path_current->lastVertex ();
             const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
             for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v);

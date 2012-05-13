@@ -45,6 +45,8 @@ template<class T>
 template<class B>
 T* Queue<T>::atomicRemove (B& condition) {
     pthread_mutex_lock (&mutex_);
+    if (size_ == 0)
+        return NULL;
     T* elem = &(items_.front ());
     if (condition (*elem)) {
         items_.pop_front ();

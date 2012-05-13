@@ -17,6 +17,13 @@ class Path {
         int size () const;
         Path& operator= (const Path &rhs);
         Vertex lastVertex () const;
+
+        void print () const {
+            for (std::list<Vertex>::const_iterator it = path_.begin(); it != path_.end(); ++it){
+            printf ("%d ", *it);
+            }
+            printf ("\n");
+        }
 };
 
 #endif // PATH_H_
