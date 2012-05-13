@@ -5,7 +5,6 @@
 #include "graph.h"
 
 #include <sstream>
-#include <iostream>
 
 class Path {
     private:
@@ -20,14 +19,7 @@ class Path {
         int size () const;
         Path& operator= (const Path &rhs);
         Vertex lastVertex () const;
-
-        std::stringstream* print () const {
-            std::stringstream *ss = new std::stringstream ();
-            for (std::list<Vertex>::const_iterator it = path_.begin(); it != path_.end(); ++it){
-                *ss << *it << " ";
-            }
-            return ss;
-        }
+        void print (std::stringstream &ss) const;
 };
 
 #endif // PATH_H_

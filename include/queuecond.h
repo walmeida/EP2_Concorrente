@@ -7,11 +7,14 @@ class QueueCond {
     public:
         explicit QueueCond (int size) : size_(size) {};
         ~QueueCond () {};
-        bool operator() (const Path* const p) {
+        bool operator() (const Path* const p) const {
             return p->size () == size_;
         }
         void incrementSizeCondition () {
             size_++;
+        }
+        int getSizeCondition () const {
+            return size_;
         }
 };
 

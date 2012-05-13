@@ -20,20 +20,24 @@ class Log {
             debug_mode_ = debug_mode;
         }
         void debug (std::string message) {
-            if (debug_mode_)
-                std::cout << "DEBUG: " << message << std::endl;
+            if (debug_mode_) {
+                message = "DEBUG: " + message;
+                std::cout << message << std::endl;
+            }
         }
         void debug (std::stringstream &message) {
             debug (message.str());
         }
         void info (std::string message) {
-            std::cout << "INFO:  " << message << std::endl;
+            message = "INFO:  " + message;
+            std::cout << message << std::endl;
         }
         void info (std::stringstream &message) {
             info (message.str());
         }
         void error (std::string message) {
-            std::cout << "ERROR: " << message << std::endl;
+            message = "ERROR: " + message;
+            std::cout << message << std::endl;
         }
         void error (std::stringstream &message) {
             error (message.str());

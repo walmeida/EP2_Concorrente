@@ -54,12 +54,10 @@ void *find_path (void *arg) {
         printf ("num finished vertex = %d of %d\n", num_finished_vertex, num_finished_vertex_final);
         while (has_paths_to_proccess) {
             printf ("Thread %d processando mais um caminho\n", *thread_id);
-            /* std::stringstream* ss;
-               ss = path_current->print ();
-             *ss << " (thread " << *thread_id << ")\n";
-             std::cout << ss->str();
-             delete ss;
-             */
+             std::stringstream ss;
+             path_current->print (ss);
+             ss << " (thread " << *thread_id << ")\n";
+             std::cout << ss.str();
             printf ("Restam %lu caminhos\n", paths.size());
             const Vertex v = path_current->lastVertex ();
             const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
@@ -88,7 +86,10 @@ void *find_path (void *arg) {
         }
         cond.incrementSizeCondition ();
         // Barreira
-        printf ("Thread %d passando pela barreira\n", *thread_id);
+        std::stringstream ss;
+        ss << "Iteracao " << cond.getSizeCondition ();
+        ss << ": Thread " << *thread_id << " chegou na barreira";
+        l.debug (ss);
         barrier->sync (*thread_id);
         printf ("Thread %d passou pela barreira\n", *thread_id);
     }
