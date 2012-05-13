@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sstream>
 #include <unistd.h>
+#include <pthread.h>
 #include "graph.h"
 #include "queue.h"
 #include "path.h"
@@ -16,6 +17,8 @@ Queue<int> *shortest_paths;
 Queue<int> paths;         
 int num_finished_vertex;
 Log& l = Log::getInstance ();
+
+pthread_t *programthread;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 void read_parameters(int argc, char* argv[]){
@@ -39,12 +42,54 @@ int numberOfProcessors () {
   return num;
 }
 
+void *dummy_function(void *arg) {
+  int i;
+  for ( i=0; i<5; i++ ) {
+    printf("Hi!\n");
+    sleep(1);
+  }
+  return NULL;
+}
+
+bool create_program_threads(int num_proc){
+  programthread = (pthread_t*) malloc( num_proc * sizeof(*programthread));
+  if(!programthread)
+    return -1;
+  
+  for(int i = 0; i < num_proc; i++){
+    if ( pthread_create( &programthread[i], NULL, dummy_function, NULL) ) {
+      printf("error creating thread.");
+      return -1;
+    }
+  }
+  
+  return 0;
+}
+
 int main (int argc, char* argv[]) {
+  int num_proc;
+  
   read_parameters (argc,argv);
   G = GraphFactory::readGraphFromFile (input_file_name); 
   std::stringstream message;
-  message << "Numero de Processadores On: " << numberOfProcessors();
+  num_proc = numberOfProcessors();
+  message << "Numero de Processadores On: " << num_proc;
   l.info (message);
+
+  /* Threads */
+  if(!create_program_threads(num_proc)){
+    exit(-1);
+  }
   
+  for(int i = 0; i < num_proc; i++){
+    if ( pthread_join ( programthread[i], NULL ) ) {
+      printf("error joining thread.");
+      exit(-1);
+    }
+  }
+  
+  /*TODO: free aqui não xD */
+  free(programthread);
+   
   return 0;
 }
