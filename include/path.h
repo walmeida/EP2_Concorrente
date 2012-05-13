@@ -12,11 +12,11 @@ class Path {
         Path ();
         Path (const Path& p);
         ~Path ();
-        bool containsVertex (Vertex v);
+        bool containsVertex (Vertex v) const;
         void insertVertex (Vertex v);
-        int size ();
+        int size () const;
         Path& operator= (const Path &rhs);
-        Vertex lastVertex ();
+        Vertex lastVertex () const;
 };
 
 #endif // PATH_H_

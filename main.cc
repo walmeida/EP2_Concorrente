@@ -9,12 +9,13 @@
 #include "graphfactory.h"
 #include "log.h"
 #include "threadmanager.h"
+#include "queuecond.h"
 
-int n;
+unsigned int n;
 Graph* G = NULL;
 Queue<Path*> *shortest_paths;
 Queue<Path*> paths;         
-int num_finished_vertex;
+int num_finished_vertex = 0;
 Log& l = Log::getInstance ();
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
@@ -24,7 +25,7 @@ char* read_parameters(int argc, char* argv[]){
       exit(-1);
     }
     
-    n = atoi(argv[1]);
+    n = (unsigned int) atoi(argv[1]);
     char* input_file_name = argv[2];
         
     if(argc > 3){
@@ -42,21 +43,36 @@ int numberOfProcessors () {
 }
 
 void *find_path (void *arg) {
-    while (!paths.empty ()){
-        Path *path_current = paths.atomicRemove ();
-        const Vertex v = path_current->lastVertex ();
-        const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
-        for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v);
-                it != end; ++it) {
-            const Vertex w = *it;
-            if (!path_current->containsVertex (w)) {
-                Path *path_new = new Path (*path_current);
-                path_new->insertVertex (w);
-                paths.atomicInsert (path_new);
-                /*Inserir caminho mínimo na fila de caminhos com índice w */
+    const int num_finished_vertex_final = G->numVertex () - 1; // subtract 1 because of vertex 0
+    QueueCond cond (1);
+    while (!paths.empty () && (num_finished_vertex < num_finished_vertex_final)){
+        Path **next_path = paths.atomicRemove (cond);
+        while (next_path != NULL) {
+            const Path *path_current = *next_path;
+            const Vertex v = path_current->lastVertex ();
+            const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
+            for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v);
+                    it != end; ++it) {
+                const Vertex w = *it;
+                if (!path_current->containsVertex (w)) {
+                    Path *path_new = new Path (*path_current);
+                    path_new->insertVertex (w);
+                    paths.atomicInsert (path_new);
+                    /* Inserir caminho mínimo na fila de caminhos com índice w */
+                    if (shortest_paths[w].size () < n) {
+                        const unsigned long new_size = 
+                            shortest_paths[w].atomicInsert (new Path (*path_new));
+                        if (new_size == n) {
+                            num_finished_vertex++;
+                        }
+                    }
+                }
             }
+            delete path_current;
+            next_path = paths.atomicRemove (cond);
         }
-        delete path_current;
+        cond.incrementSizeCondition ();
+        // Barreira
     }
     return NULL;
 }

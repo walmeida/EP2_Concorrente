@@ -15,6 +15,7 @@ class Digraph {
         Digraph ();
     public:
         ~Digraph ();
+        int numVertex () {return V_;};
         std::list<Vertex>::const_iterator getNeighboursBegin (Vertex v) {
             return adj_[v].begin ();
         }

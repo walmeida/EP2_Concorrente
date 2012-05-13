@@ -6,8 +6,8 @@ Path::Path () : size_(0) {};
 Path::Path (const Path& p) : path_(p.path_), size_(p.size_) {};
 Path::~Path () {};
 
-bool Path::containsVertex (Vertex v) {
-    for (list<Vertex>::iterator it = path_.begin(); it != path_.end(); ++it){
+bool Path::containsVertex (Vertex v) const {
+    for (list<Vertex>::const_iterator it = path_.begin(); it != path_.end(); ++it){
         if (*it == v)
             return true;
     }
@@ -19,7 +19,7 @@ void Path::insertVertex (Vertex v) {
     ++size_;
 }
 
-int Path::size () {
+int Path::size () const {
     return size_;
 }
 
@@ -29,6 +29,6 @@ Path& Path::operator= (const Path &rhs) {
     return *this;
 }
 
-Vertex Path::lastVertex () {
+Vertex Path::lastVertex () const {
     return path_.back ();
 }
