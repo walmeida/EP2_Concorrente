@@ -122,5 +122,7 @@ int main (int argc, char* argv[]) {
     ThreadManager tm (num_proc);
     tm.createAndRunThreads (find_path);
 
+    delete[] shortest_paths;
+
     return 0;
 }
