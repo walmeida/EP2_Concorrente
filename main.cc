@@ -12,8 +12,8 @@
 
 int n;
 Graph* G = NULL;
-Queue<int> *shortest_paths;
-Queue<int> paths;         
+Queue<Path> *shortest_paths;
+Queue<Path> paths;         
 int num_finished_vertex;
 Log& l = Log::getInstance ();
 
