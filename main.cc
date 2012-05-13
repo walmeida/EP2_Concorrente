@@ -105,6 +105,13 @@ void free_memory () {
         has_elements = paths.remove (p);
     }
 
+    for (int i = 0; i < G->numVertex (); ++i) {
+        has_elements = shortest_paths[i].remove (p);
+        while (has_elements) {
+            delete p;
+            has_elements = shortest_paths[i].remove (p);
+        }
+    }
     delete[] shortest_paths;
 }   
 
