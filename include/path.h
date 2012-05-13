@@ -15,6 +15,7 @@ class Path {
         void insertVertex (Vertex v);
         int size ();
         Path& operator= (const Path &rhs);
+        Vertex lastVertex ();
 };
 
 #endif // PATH_H_

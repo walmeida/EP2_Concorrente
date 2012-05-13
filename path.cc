@@ -27,3 +27,7 @@ Path& Path::operator= (const Path &rhs) {
     size_ = rhs.size_;
     return *this;
 }
+
+Vertex Path::lastVertex () {
+    return path_.back();
+}

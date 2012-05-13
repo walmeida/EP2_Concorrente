@@ -41,8 +41,29 @@ int numberOfProcessors () {
     return num;
 }
 
+void *find_path(void *arg) {
+
+    Path path_current, path_new;
+    Vertex v,w;
+    while(!paths.empty()){
+      path_current = paths.atomicRemove ();
+      v = path_current.lastVertex();
+      for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v); it != G->getNeighboursEnd (v); ++it){
+        w = *it;
+        if(!path_current.containsVertex(w)){
+          path_new = path_current;
+          path_new.insertVertex(w);
+          paths.atomicInsert(path_new);
+          /*Inserir caminho mínimo na fila de caminhos com índice w */
+        }
+      }
+    }
+    
+    return NULL;
+}
+
 void *dummy_function(void *arg) {
-    for (int i=0; i<5; ++i) {
+  for (int i=0; i<5; ++i) {
         printf("Hi!\n");
         sleep(1);
     }
@@ -56,7 +77,12 @@ int main (int argc, char* argv[]) {
     int num_proc = numberOfProcessors();
     message << "Numero de Processadores On: " << num_proc;
     l.info (message);
-
+    
+    /* Fila de caminhos */
+    Path path_zero;
+    path_zero.insertVertex(0);
+    paths.atomicInsert(path_zero);
+    
     /* Threads */
     ThreadManager tm(num_proc);
     tm.createAndRunThreads (dummy_function);
