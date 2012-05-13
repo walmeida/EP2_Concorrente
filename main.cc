@@ -58,11 +58,12 @@ void *find_path (void *arg) {
                 break;
             } else {
                 printf ("Thread %d processando mais um caminho\n", *thread_id);
-                std::stringstream* ss;
+               /* std::stringstream* ss;
                 ss = path_current->print ();
                 *ss << " (thread " << *thread_id << ")\n";
                 std::cout << ss->str();
                 delete ss;
+                */
                 printf ("Restam %lu caminhos\n", paths.size());
             }
             const Vertex v = path_current->lastVertex ();
@@ -80,7 +81,9 @@ void *find_path (void *arg) {
                             shortest_paths[w].atomicInsert (new Path (*path_new));
                         if (new_size == n) {
                             num_finished_vertex++;
-                        }
+                        } else {
+                            printf ("Found %lu paths for vertex %d\n", new_size, w);
+                        } 
                     }
                 }
             }

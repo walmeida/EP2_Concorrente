@@ -36,7 +36,7 @@ unsigned long Queue<T>::atomicInsert (T elem) {
     unsigned long new_size;
     pthread_mutex_lock (&mutex_);
     items_.push_back (elem);
-    new_size = size_++;
+    new_size = ++size_;
     pthread_mutex_unlock (&mutex_);
     return new_size;
 }
