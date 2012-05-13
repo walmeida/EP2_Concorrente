@@ -4,6 +4,9 @@
 #include <list>
 #include "graph.h"
 
+#include <sstream>
+#include <iostream>
+
 class Path {
     private:
         std::list<Vertex> path_;
@@ -18,11 +21,12 @@ class Path {
         Path& operator= (const Path &rhs);
         Vertex lastVertex () const;
 
-        void print () const {
+        std::stringstream* print () const {
+            std::stringstream *ss = new std::stringstream ();
             for (std::list<Vertex>::const_iterator it = path_.begin(); it != path_.end(); ++it){
-            printf ("%d ", *it);
+                *ss << *it << " ";
             }
-            printf ("\n");
+            return ss;
         }
 };
 

@@ -21,3 +21,7 @@ void Barrier::sync (int thread_id) {
         while (arrive_[neighbour] < arrive_[thread_id]);
     }
 }
+
+void Barrier::setFinished (int thread_id) {
+    arrive_[thread_id] = -1;
+}

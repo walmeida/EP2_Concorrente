@@ -10,6 +10,7 @@ class Barrier {
         Barrier (int num_threads);
         ~Barrier ();
         void sync (int thread_id);
+        void setFinished (int thread_id);
 };
 
 #endif

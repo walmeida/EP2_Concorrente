@@ -50,6 +50,7 @@ void *find_path (void *arg) {
     QueueCond cond (1);
     while (!paths.empty () && (num_finished_vertex < num_finished_vertex_final)){
         Path **next_path = paths.atomicRemove (cond);
+        printf ("num finished vertex = %d of %d\n", num_finished_vertex, num_finished_vertex_final);
         while (next_path != NULL) {
             const Path *path_current = *next_path;
             if (path_current == NULL) {
@@ -57,7 +58,12 @@ void *find_path (void *arg) {
                 break;
             } else {
                 printf ("Thread %d processando mais um caminho\n", *thread_id);
-                path_current->print ();
+                std::stringstream* ss;
+                ss = path_current->print ();
+                *ss << " (thread " << *thread_id << ")\n";
+                std::cout << ss->str();
+                delete ss;
+                printf ("Restam %lu caminhos\n", paths.size());
             }
             const Vertex v = path_current->lastVertex ();
             const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
@@ -80,11 +86,16 @@ void *find_path (void *arg) {
             }
             delete path_current;
             next_path = paths.atomicRemove (cond);
+            printf ("Thread %d indo para prox iteracao\n", *thread_id);
         }
         cond.incrementSizeCondition ();
         // Barreira
+        printf ("Thread %d passando pela barreira\n", *thread_id);
         barrier->sync (*thread_id);
+        printf ("Thread %d passou pela barreira\n", *thread_id);
     }
+    barrier->setFinished (*thread_id);
+    printf ("Thread %d acabou\n", *thread_id);
     return NULL;
 }
 
