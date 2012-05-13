@@ -17,7 +17,7 @@ Queue<int> paths;
 int num_finished_vertex;
 Log& l = Log::getInstance ();
 
-pthread_t *programthread;
+pthread_t *programthread = NULL;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 char* read_parameters(int argc, char* argv[]){
@@ -44,54 +44,48 @@ int numberOfProcessors () {
 }
 
 void *dummy_function(void *arg) {
-  int i;
-  for ( i=0; i<5; i++ ) {
-    printf("Hi!\n");
-    sleep(1);
-  }
-  return NULL;
+    for (int i=0; i<5; ++i) {
+        printf("Hi!\n");
+        sleep(1);
+    }
+    return NULL;
 }
 
 bool create_program_threads(int num_proc){
-  programthread = (pthread_t*) malloc( num_proc * sizeof(*programthread));
-  if(!programthread)
-    return -1;
-  
-  for(int i = 0; i < num_proc; i++){
-    if ( pthread_create( &programthread[i], NULL, dummy_function, NULL) ) {
-      printf("error creating thread.");
-      return -1;
+    programthread = new pthread_t[num_proc];
+    if(!programthread)
+        return false;
+    for(int i = 0; i < num_proc; i++){
+        if ( pthread_create( &programthread[i], NULL, dummy_function, NULL) ) {
+            l.error ("Error creating thread.");
+            return false;
+        }
     }
-  }
-  
-  return 0;
+    return true;
 }
 
 int main (int argc, char* argv[]) {
-  int num_proc;
-  
-  char* input_file_name = read_parameters (argc,argv);
-  G = GraphFactory::readGraphFromFile (input_file_name); 
-  std::stringstream message;
-  num_proc = numberOfProcessors();
-  message << "Numero de Processadores On: " << num_proc;
-  l.info (message);
+    char* input_file_name = read_parameters (argc,argv);
+    G = GraphFactory::readGraphFromFile (input_file_name); 
+    std::stringstream message;
+    int num_proc = numberOfProcessors();
+    message << "Numero de Processadores On: " << num_proc;
+    l.info (message);
 
-  /* Threads */
-  if(!create_program_threads(num_proc)){
-    exit(-1);
-  }
-  
-  for(int i = 0; i < num_proc; i++){
-    if ( pthread_join ( programthread[i], NULL ) ) {
-      printf("error joining thread.");
-      exit(-1);
+    /* Threads */
+    if(!create_program_threads(num_proc)){
+        exit(-1);
     }
-  }
-  
-  /*TODO: free aqui ??xD */
-  free(programthread);
-   
-  return 0;
-  
+
+    for(int i = 0; i < num_proc; ++i){
+        if (pthread_join (programthread[i], NULL)) {
+            l.error ("Error joining thread.");
+            exit (-1);
+        }
+    }
+
+    // TODO delete aqui??
+    delete[] programthread;
+
+    return 0;
 }
