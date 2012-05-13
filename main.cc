@@ -53,10 +53,10 @@ void *dummy_function(void *arg) {
 
 bool create_program_threads(int num_proc){
     programthread = new pthread_t[num_proc];
-    if(!programthread)
+    if (!programthread)
         return false;
-    for(int i = 0; i < num_proc; i++){
-        if ( pthread_create( &programthread[i], NULL, dummy_function, NULL) ) {
+    for (int i = 0; i < num_proc; ++i){
+        if (pthread_create ( &programthread[i], NULL, dummy_function, NULL) ) {
             l.error ("Error creating thread.");
             return false;
         }
@@ -73,11 +73,11 @@ int main (int argc, char* argv[]) {
     l.info (message);
 
     /* Threads */
-    if(!create_program_threads(num_proc)){
+    if (!create_program_threads(num_proc)){
         exit(-1);
     }
 
-    for(int i = 0; i < num_proc; ++i){
+    for (int i = 0; i < num_proc; ++i){
         if (pthread_join (programthread[i], NULL)) {
             l.error ("Error joining thread.");
             exit (-1);
