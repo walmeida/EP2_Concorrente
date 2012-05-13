@@ -16,7 +16,7 @@ class Queue {
         ~Queue ();
         unsigned long atomicInsert (T elem);
         template<class B>
-        T* atomicRemove (B& condition);
+        bool atomicRemove (B& condition, T& elem);
         unsigned long size ();
         bool empty ();
 };
@@ -43,19 +43,19 @@ unsigned long Queue<T>::atomicInsert (T elem) {
 
 template<class T>
 template<class B>
-T* Queue<T>::atomicRemove (B& condition) {
+bool Queue<T>::atomicRemove (B& condition, T& elem) {
+    bool success = false;
     pthread_mutex_lock (&mutex_);
-    if (size_ == 0)
-        return NULL;
-    T* elem = &(items_.front ());
-    if (condition (*elem)) {
-        items_.pop_front ();
-        size_--;
-    } else {
-        elem = NULL;
+    if (size_ != 0) {
+        elem = items_.front ();
+        if (condition (elem)) {
+            items_.pop_front ();
+            size_--;
+            success = true;
+        }
     }
     pthread_mutex_unlock (&mutex_);
-    return elem;
+    return success;
 }
 
 template<class T>

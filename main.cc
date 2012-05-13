@@ -49,23 +49,18 @@ void *find_path (void *arg) {
     const int num_finished_vertex_final = G->numVertex () - 1; // subtract 1 because of vertex 0
     QueueCond cond (1);
     while (!paths.empty () && (num_finished_vertex < num_finished_vertex_final)){
-        Path **next_path = paths.atomicRemove (cond);
+        Path *path_current;
+        bool has_paths_to_proccess = paths.atomicRemove (cond, path_current);
         printf ("num finished vertex = %d of %d\n", num_finished_vertex, num_finished_vertex_final);
-        while (next_path != NULL) {
-            const Path *path_current = *next_path;
-            if (path_current == NULL) {
-                l.error ("!!!!!!!!!!!!!!!!!!!!OH OH!!!!!!!!!!!!!!!!");
-                break;
-            } else {
-                printf ("Thread %d processando mais um caminho\n", *thread_id);
-               /* std::stringstream* ss;
-                ss = path_current->print ();
-                *ss << " (thread " << *thread_id << ")\n";
-                std::cout << ss->str();
-                delete ss;
-                */
-                printf ("Restam %lu caminhos\n", paths.size());
-            }
+        while (has_paths_to_proccess) {
+            printf ("Thread %d processando mais um caminho\n", *thread_id);
+            /* std::stringstream* ss;
+               ss = path_current->print ();
+             *ss << " (thread " << *thread_id << ")\n";
+             std::cout << ss->str();
+             delete ss;
+             */
+            printf ("Restam %lu caminhos\n", paths.size());
             const Vertex v = path_current->lastVertex ();
             const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
             for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v);
@@ -88,7 +83,7 @@ void *find_path (void *arg) {
                 }
             }
             delete path_current;
-            next_path = paths.atomicRemove (cond);
+            has_paths_to_proccess = paths.atomicRemove (cond, path_current);
             printf ("Thread %d indo para prox iteracao\n", *thread_id);
         }
         cond.incrementSizeCondition ();
