@@ -10,6 +10,7 @@ class Path {
         unsigned long size_;
     public:
         Path ();
+        Path (const Path& p);
         ~Path ();
         bool containsVertex (Vertex v);
         void insertVertex (Vertex v);

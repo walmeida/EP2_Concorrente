@@ -3,6 +3,7 @@
 using std::list;
 
 Path::Path () : size_(0) {};
+Path::Path (const Path& p) : path_(p.path_), size_(p.size_) {};
 Path::~Path () {};
 
 bool Path::containsVertex (Vertex v) {
@@ -29,5 +30,5 @@ Path& Path::operator= (const Path &rhs) {
 }
 
 Vertex Path::lastVertex () {
-    return path_.back();
+    return path_.back ();
 }

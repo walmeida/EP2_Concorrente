@@ -12,8 +12,8 @@
 
 int n;
 Graph* G = NULL;
-Queue<Path> *shortest_paths;
-Queue<Path> paths;         
+Queue<Path*> *shortest_paths;
+Queue<Path*> paths;         
 int num_finished_vertex;
 Log& l = Log::getInstance ();
 
@@ -41,24 +41,23 @@ int numberOfProcessors () {
     return num;
 }
 
-void *find_path(void *arg) {
-
-    Path path_current, path_new;
-    Vertex v,w;
-    while(!paths.empty()){
-      path_current = paths.atomicRemove ();
-      v = path_current.lastVertex();
-      for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v); it != G->getNeighboursEnd (v); ++it){
-        w = *it;
-        if(!path_current.containsVertex(w)){
-          path_new = path_current;
-          path_new.insertVertex(w);
-          paths.atomicInsert(path_new);
-          /*Inserir caminho mínimo na fila de caminhos com índice w */
+void *find_path (void *arg) {
+    while (!paths.empty ()){
+        Path *path_current = paths.atomicRemove ();
+        const Vertex v = path_current->lastVertex ();
+        const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
+        for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v);
+                it != end; ++it) {
+            const Vertex w = *it;
+            if (!path_current->containsVertex (w)) {
+                Path *path_new = new Path (*path_current);
+                path_new->insertVertex (w);
+                paths.atomicInsert (path_new);
+                /*Inserir caminho mínimo na fila de caminhos com índice w */
+            }
         }
-      }
+        delete path_current;
     }
-    
     return NULL;
 }
 
@@ -79,9 +78,9 @@ int main (int argc, char* argv[]) {
     l.info (message);
     
     /* Fila de caminhos */
-    Path path_zero;
-    path_zero.insertVertex(0);
-    paths.atomicInsert(path_zero);
+    Path *path_zero = new Path ();
+    path_zero->insertVertex(0);
+    paths.atomicInsert (path_zero);
     
     /* Threads */
     ThreadManager tm(num_proc);
