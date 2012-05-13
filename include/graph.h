@@ -15,9 +15,11 @@ class Digraph {
         Digraph ();
     public:
         ~Digraph ();
-        template <class Function>
-        void neighboursForEach (Vertex v, Function f) {
-            for_each (adj_[v].begin (), adj_[v].end (), f);
+        std::list<Vertex>::const_iterator getNeighboursBegin (Vertex v) {
+            return adj_[v].begin ();
+        }
+        const std::list<Vertex>::const_iterator getNeighboursEnd (Vertex v) {
+            return adj_[v].end ();
         }
         friend class GraphFactory;
 };
