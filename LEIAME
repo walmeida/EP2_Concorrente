@@ -1,0 +1,34 @@
+/* ******************************************************* */
+/* Aluno: Jefferson Serafim Ascaneo   NUSP 6431284         */
+/* Aluno: Wallace Faveron de Almeida  NUSP 6879609 	       */
+/* MAC0438 - 2012 - IME-USP	                               */
+/* Prof. Daniel Macedo Bastista                            */
+/* EP2 - Menores Caminhos                                  */
+/* Programa testado e compilado no Ubuntu 10.10	           */
+/* ******************************************************* */
+
+O Exercício Programa realiza a busca de um número arbitrário
+de caminhos entre a origem e todos os demais pontos de uma 
+rede, representada em forma de um grafo conexo, utilizando
+múltiplas threads.
+A implementação foi feita em linguagem C++. Dentre os objetivos 
+principais do exercício está a utilização de barreiras de
+sincronização. 
+
+Juntamente ao programa, foi elaborado um Makefile. 
+Para compilar o código-fonte, basta digitar em um terminal:
+
+make
+
+Para executar, basta digitar o seguinte comando na pasta bin:
+
+./caminhosminimos <número de caminhos mínimos> <arquivo de entrada> [-debug] 
+
+onde: 
+"número de caminhos mínimos" é um valor que representa o número
+de caminhos mínimos encontrados entre dois vértices;
+"arquivo de entrada" é o nome correspondente ao arquivo de entrada;
+"-debug" é um parâmetro opcional que ativao modo 'debug';
+
+O resultado obtido para o arquivo de entrada proposto no enunciado
+encontra-se em "relatorio.pdf".
