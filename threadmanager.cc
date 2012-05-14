@@ -1,7 +1,5 @@
 #include "threadmanager.h"
-#include "log.h"
-
-extern Log l;
+#include <iostream>
 
 ThreadManager::ThreadManager (int num_threads) : num_threads_(num_threads) {
     programthread_ = new pthread_t[num_threads];
@@ -23,7 +21,7 @@ bool ThreadManager::createProgramThreads (void* (*thread_function) (void*)) {
     for (int i = 0; i < num_threads_; ++i){
         thread_ids_[i] = i;
         if (pthread_create (&programthread_[i], NULL, thread_function, (void *) &(thread_ids_[i]))) {
-            l.error ("Error creating thread.");
+            std::cerr << "Error creating thread." << std::endl;
             return false;
         }
     }
@@ -33,7 +31,7 @@ bool ThreadManager::createProgramThreads (void* (*thread_function) (void*)) {
 void ThreadManager::joinThreads () {
     for (int i = 0; i < num_threads_; ++i){
         if (pthread_join (programthread_[i], NULL)) {
-            l.error ("Error joining thread.");
+            std::cerr << "Error joining thread." << std::endl;
             return;
         }
     }

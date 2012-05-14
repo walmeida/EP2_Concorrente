@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 #include <sstream>
 #include <unistd.h>
 #include "graph.h"
 #include "queue.h"
 #include "path.h"
 #include "graphfactory.h"
-#include "log.h"
 #include "threadmanager.h"
 #include "queuecond.h"
 #include "barrier.h"
@@ -17,16 +17,17 @@ Graph* G = NULL;
 Queue<Path*> *shortest_paths;
 Queue<Path*> paths;         
 int num_finished_vertex = 0;
-Log& l = Log::getInstance ();
 Barrier *barrier = NULL;
 bool debug_mode = false;
 pthread_mutex_t print_mutex;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 char* read_parameters(int argc, char* argv[]){
-    if(argc < 3){
-      l.error ("Erro na leitura da entrada. Argumentos esperados: <número de caminhos mínimos> <arquivo de entrada> [-debug]\n");
-      exit(-1);
+    if (argc < 3){
+        std::cerr << "Erro na leitura da entrada. Argumentos esperados: "
+                    "<número de caminhos mínimos> <arquivo de entrada> [-debug]"
+                  << std::endl;
+        exit (-1);
     }
     
     n = (unsigned int) atoi(argv[1]);
@@ -34,7 +35,6 @@ char* read_parameters(int argc, char* argv[]){
         
     if(argc > 3){
         debug_mode = (strcmp("-debug",argv[3]) == 0);
-        Log::setDebugMode(debug_mode);
     }
 
     return input_file_name;
@@ -94,14 +94,14 @@ void *find_path (void *arg) {
             has_paths_to_proccess = paths.atomicRemove (cond, path_current);
             //printf ("Thread %d indo para prox iteracao\n", *thread_id);
         }
-        cond.incrementSizeCondition ();
-        // Barreira
         if (debug_mode) {
             pthread_mutex_lock (&print_mutex);
             std::cout << "Iteracao " << cond.getSizeCondition ();
             std::cout << ": Thread " << *thread_id << " chegou na barreira" << std::endl;
             pthread_mutex_unlock (&print_mutex);
         }
+        cond.incrementSizeCondition ();
+        // Barreira
         barrier->sync (*thread_id);
         //printf ("Thread %d passou pela barreira\n", *thread_id);
         if (debug_mode && (*thread_id == 0)) {

@@ -1,7 +1,7 @@
 #include "graphfactory.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "log.h"
+#include <iostream>
 
 using std::vector;
 using std::list;
