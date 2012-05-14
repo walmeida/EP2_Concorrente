@@ -32,3 +32,8 @@ de caminhos mínimos encontrados entre dois vértices;
 
 O resultado obtido para o arquivo de entrada proposto no enunciado
 encontra-se em "relatorio.pdf".
+
+A barreira utilizada no exercício é do tipo barreira de disseminação.
+Sua implementação foi feita com base no modelo proposto na principal
+bibliografia do curso e nos slides das aulas. Pode ser visualizada
+no arquivo "barrier.cc", especificamente entre as linhas 5 e 16.
