@@ -3,7 +3,7 @@ ODIR = obj
 BDIR = bin
 
 CC = g++
-CFLAGS = -Wall -I$(IDIR) -g
+CFLAGS = -Wall -I$(IDIR) -O2
 LIBS = -lpthread
 
 EXE = caminhosminimos
