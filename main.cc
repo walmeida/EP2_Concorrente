@@ -125,7 +125,6 @@ void *find_path (void *arg) {
             }
             delete path_current;
             has_paths_to_proccess = paths.atomicRemove (cond, path_current);
-            //printf ("Thread %d indo para prox iteracao\n", *thread_id);
         }
         // Barreira
         ++barrier_stops;
@@ -137,7 +136,6 @@ void *find_path (void *arg) {
             pthread_mutex_unlock (&print_mutex);
         }
         barrier->sync (*thread_id);
-        //printf ("Thread %d passou pela barreira\n", *thread_id);
         if (debug_mode) {
             ++barrier_stops;
 
@@ -155,7 +153,6 @@ void *find_path (void *arg) {
         cond.incrementSizeCondition ();
     }
     barrier->setFinished (*thread_id);
-    //printf ("Thread %d acabou\n", *thread_id);
     pthread_mutex_lock (&barrier_iterations_mutex);
     int iterations = cond.getSizeCondition () - 1;
     if (barrier_iterations < iterations)
@@ -189,7 +186,9 @@ int main (int argc, char* argv[]) {
     pthread_mutex_init (&barrier_iterations_mutex, NULL);
     pthread_mutex_init (&current_working_threads_mutex, NULL);
     int num_proc = numberOfProcessors();
-    current_working_threads = num_proc; // theres no need to use mutex here, only 1 thread
+    pthread_mutex_lock (&current_working_threads_mutex);
+    current_working_threads = num_proc;
+    pthread_mutex_unlock (&current_working_threads_mutex);
     
     /* Fila de caminhos */
     Path *path_zero = new Path ();
