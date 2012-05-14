@@ -22,6 +22,8 @@ bool debug_mode = false;
 pthread_mutex_t print_mutex;
 int barrier_iterations = 0;
 pthread_mutex_t barrier_iterations_mutex;
+int current_working_threads = 0;
+pthread_mutex_t current_working_threads_mutex;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 char* read_parameters(int argc, char* argv[]){
@@ -76,10 +78,30 @@ void printPaths (int iteration_number) {
 void *find_path (void *arg) {
     const int *thread_id = (int *) arg;
     const int num_finished_vertex_final = G->numVertex () - 1; // subtract 1 because of vertex 0
+    bool is_working = true;
     QueueCond cond (1);
-    while (!paths.empty () && (num_finished_vertex < num_finished_vertex_final)){
+    while (num_finished_vertex < num_finished_vertex_final) {
         Path *path_current;
         bool has_paths_to_proccess = paths.atomicRemove (cond, path_current);
+
+        pthread_mutex_lock (&current_working_threads_mutex);
+        if (has_paths_to_proccess) {
+            if (!is_working) { // started to work again
+                is_working = true;
+                ++current_working_threads;
+            }
+        } else {
+            if (is_working) { // no work left to do right now
+                is_working = false;
+                --current_working_threads;
+            }
+        }
+        if (current_working_threads == 0) {
+            pthread_mutex_unlock (&current_working_threads_mutex);
+            break;
+        }
+        pthread_mutex_unlock (&current_working_threads_mutex);
+
         while (has_paths_to_proccess) {
             const Vertex v = path_current->lastVertex ();
             const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
@@ -151,7 +173,9 @@ int main (int argc, char* argv[]) {
     G = GraphFactory::readGraphFromFile (input_file_name); 
     pthread_mutex_init (&print_mutex, NULL);
     pthread_mutex_init (&barrier_iterations_mutex, NULL);
+    pthread_mutex_init (&current_working_threads_mutex, NULL);
     int num_proc = numberOfProcessors();
+    current_working_threads = num_proc; // theres no need to use mutex here, only 1 thread
     
     /* Fila de caminhos */
     Path *path_zero = new Path ();
@@ -169,6 +193,7 @@ int main (int argc, char* argv[]) {
     std::cout << "Numero de iteracoes: " << barrier_iterations << std::endl;
     printPaths (0);
 
+    pthread_mutex_destroy (&current_working_threads_mutex);
     pthread_mutex_destroy (&barrier_iterations_mutex);
     pthread_mutex_destroy (&print_mutex);
     free_memory ();
