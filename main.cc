@@ -20,6 +20,8 @@ int num_finished_vertex = 0;
 Barrier *barrier = NULL;
 bool debug_mode = false;
 pthread_mutex_t print_mutex;
+int barrier_iterations = 0;
+pthread_mutex_t barrier_iterations_mutex;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 char* read_parameters(int argc, char* argv[]){
@@ -46,8 +48,11 @@ int numberOfProcessors () {
     return num;
 }
 
-void printPaths () {
+void printPaths (int iteration_number) {
     pthread_mutex_lock (&print_mutex);
+    if (iteration_number)
+        std::cout << "Caminhos encontrados na iteracao " << iteration_number
+            << ":" << std::endl << std::endl;
     for (int v = 1; v < G->numVertex (); ++v) {
         std::cout << "Para o vertice " << v << ":" << std::endl;
         const std::list<Path*>::const_iterator end = shortest_paths[v].end ();
@@ -105,16 +110,21 @@ void *find_path (void *arg) {
             std::cout << ": Thread " << *thread_id << " chegou na barreira" << std::endl;
             pthread_mutex_unlock (&print_mutex);
         }
-        cond.incrementSizeCondition ();
         // Barreira
         barrier->sync (*thread_id);
         //printf ("Thread %d passou pela barreira\n", *thread_id);
         if (debug_mode && (*thread_id == 0)) {
-            printPaths ();
+            printPaths (cond.getSizeCondition ());
         }
+        cond.incrementSizeCondition ();
     }
     barrier->setFinished (*thread_id);
-    printf ("Thread %d acabou\n", *thread_id);
+    //printf ("Thread %d acabou\n", *thread_id);
+    pthread_mutex_lock (&barrier_iterations_mutex);
+    int iterations = cond.getSizeCondition () - 1;
+    if (barrier_iterations < iterations)
+        barrier_iterations = iterations;
+    pthread_mutex_unlock (&barrier_iterations_mutex);
     return NULL;
 }
 
@@ -140,6 +150,7 @@ int main (int argc, char* argv[]) {
     char* input_file_name = read_parameters (argc,argv);
     G = GraphFactory::readGraphFromFile (input_file_name); 
     pthread_mutex_init (&print_mutex, NULL);
+    pthread_mutex_init (&barrier_iterations_mutex, NULL);
     int num_proc = numberOfProcessors();
     
     /* Fila de caminhos */
@@ -155,8 +166,10 @@ int main (int argc, char* argv[]) {
     tm.createAndRunThreads (find_path);
 
     /* Imprimindo resultado */
-    printPaths ();
+    std::cout << "Numero de iteracoes: " << barrier_iterations << std::endl;
+    printPaths (0);
 
+    pthread_mutex_destroy (&barrier_iterations_mutex);
     pthread_mutex_destroy (&print_mutex);
     free_memory ();
 
