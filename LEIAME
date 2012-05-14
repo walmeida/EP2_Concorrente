@@ -38,3 +38,22 @@ Sua implementação foi feita com base no modelo proposto na principal
 bibliografia do curso e nos slides das aulas. Pode ser visualizada
 no arquivo "barrier.cc", especificamente entre as linhas 5 e 16
 (inicialização), e entre as linhas 22 e 28 (a barreira).
+
+
+Resumo do funcionamento do EP:
+
+A cada iteração, as threads processam caminhos de um mesmo tamanho.
+Processam caminhos de tamanho 1 na primeira iteração, tamanho 2 na
+segunda, e assim por diante. Inicialmente, existe um único "caminho"
+que é o que contém apenas o vértice 0.
+
+Ao processar um caminho, a thread (função find_path no main.cc) tenta 
+ir adicionando vértices vizinhos ao último vértice do caminho. Assim ela
+vai criando vários outros caminhos de tamanho maior (um vértice a mais),
+e verifica se o vértice de destino já possui o mínimo de caminhos que 
+precisa. Além disso, adiciona os caminhos encontrados na lista de 
+caminhos a serem processados (só serão processados na próxima iteração).
+
+A barreira serve para garantir que todas as threads estão processando
+caminhos de mesmo tamanho, assim eles são adicionados na ordem de 
+tamanho nos vértices de destino.
