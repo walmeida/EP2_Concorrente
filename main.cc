@@ -51,11 +51,16 @@ void printPaths () {
     for (int v = 1; v < G->numVertex (); ++v) {
         std::cout << "Para o vertice " << v << ":" << std::endl;
         const std::list<Path*>::const_iterator end = shortest_paths[v].end ();
+        unsigned int num_paths = 0;
         for (std::list<Path*>::const_iterator it = shortest_paths[v].begin ();
                 it != end; ++it) {
             std::ostringstream path_text;
             (*it)->print (path_text);
             std::cout << path_text.str () << std::endl;
+            /* Nao imprimir mais caminhos do que o necessario */
+            ++num_paths;
+            if(num_paths == n)
+                break;
         }
         std::cout << std::endl;
     }
@@ -148,6 +153,9 @@ int main (int argc, char* argv[]) {
     barrier = new Barrier (num_proc);
     ThreadManager tm (num_proc);
     tm.createAndRunThreads (find_path);
+
+    /* Imprimindo resultado */
+    printPaths ();
 
     pthread_mutex_destroy (&print_mutex);
     free_memory ();
