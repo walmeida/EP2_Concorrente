@@ -80,6 +80,7 @@ void *find_path (void *arg) {
     const int num_finished_vertex_final = G->numVertex () - 1; // subtract 1 because of vertex 0
     bool is_working = true;
     QueueCond cond (1);
+    int barrier_stops = 0;
     while (num_finished_vertex < num_finished_vertex_final) {
         Path *path_current;
         bool has_paths_to_proccess = paths.atomicRemove (cond, path_current);
@@ -96,7 +97,7 @@ void *find_path (void *arg) {
                 --current_working_threads;
             }
         }
-        if (current_working_threads == 0) {
+        if (current_working_threads == 0) { // no work left to do
             pthread_mutex_unlock (&current_working_threads_mutex);
             break;
         }
@@ -126,17 +127,30 @@ void *find_path (void *arg) {
             has_paths_to_proccess = paths.atomicRemove (cond, path_current);
             //printf ("Thread %d indo para prox iteracao\n", *thread_id);
         }
+        // Barreira
+        ++barrier_stops;
         if (debug_mode) {
             pthread_mutex_lock (&print_mutex);
-            std::cout << "Iteracao " << cond.getSizeCondition ();
-            std::cout << ": Thread " << *thread_id << " chegou na barreira" << std::endl;
+            std::cout << "Iteracao " << cond.getSizeCondition ()
+                      << ": Thread " << *thread_id << " chegou na barreira pela "
+                      << barrier_stops << "a vez" << std::endl;
             pthread_mutex_unlock (&print_mutex);
         }
-        // Barreira
         barrier->sync (*thread_id);
         //printf ("Thread %d passou pela barreira\n", *thread_id);
-        if (debug_mode && (*thread_id == 0)) {
-            printPaths (cond.getSizeCondition ());
+        if (debug_mode) {
+            ++barrier_stops;
+
+            pthread_mutex_lock (&print_mutex);
+            std::cout << "Iteracao " << cond.getSizeCondition ()
+                      << ": Thread " << *thread_id << " chegou na barreira pela "
+                      << barrier_stops << "a vez" << std::endl;
+            pthread_mutex_unlock (&print_mutex);
+            
+            if (*thread_id == 0) {
+                printPaths (cond.getSizeCondition ());
+            }
+            barrier->sync (*thread_id);
         }
         cond.incrementSizeCondition ();
     }
@@ -190,7 +204,11 @@ int main (int argc, char* argv[]) {
     tm.createAndRunThreads (find_path);
 
     /* Imprimindo resultado */
-    std::cout << "Numero de iteracoes: " << barrier_iterations << std::endl;
+    std::cout << std::endl << "Numero de iteracoes: " << barrier_iterations << std::endl;
+    std::cout << "As threads se encontraram na barreira "
+              << (debug_mode ? barrier_iterations << 1 : barrier_iterations)
+              << " vezes (" << (debug_mode ? "2" : "1") << " por iteracao)."
+              << std::endl << std::endl;
     printPaths (0);
 
     pthread_mutex_destroy (&current_working_threads_mutex);
