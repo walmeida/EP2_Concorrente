@@ -20,6 +20,7 @@ int num_finished_vertex = 0;
 Log& l = Log::getInstance ();
 Barrier *barrier = NULL;
 bool debug_mode = false;
+pthread_mutex_t print_mutex;
 
 /* ep2.exe <número de caminhos mínimos> <arquivo de entrada> [-debug] */
 char* read_parameters(int argc, char* argv[]){
@@ -46,19 +47,20 @@ int numberOfProcessors () {
 }
 
 void printPaths () {
-    std::ostringstream ss;
+    pthread_mutex_lock (&print_mutex);
     for (int v = 1; v < G->numVertex (); ++v) {
-        ss << "Para o vertice " << v << ":\n";
-        l.info (ss);
+        std::cout << "Para o vertice " << v << ":" << std::endl;
         const std::list<Path*>::const_iterator end = shortest_paths[v].end ();
         for (std::list<Path*>::const_iterator it = shortest_paths[v].begin ();
                 it != end; ++it) {
-            ss.clear ();
-            (*it)->print (ss);
-            l.info (ss);
+            std::ostringstream path_text;
+            (*it)->print (path_text);
+            std::cout << path_text.str () << std::endl;
         }
-        l.info ("\n");
+        std::cout << std::endl;
     }
+    std::cout.flush ();
+    pthread_mutex_unlock (&print_mutex);
 }
 
 void *find_path (void *arg) {
@@ -68,14 +70,7 @@ void *find_path (void *arg) {
     while (!paths.empty () && (num_finished_vertex < num_finished_vertex_final)){
         Path *path_current;
         bool has_paths_to_proccess = paths.atomicRemove (cond, path_current);
-        printf ("num finished vertex = %d of %d\n", num_finished_vertex, num_finished_vertex_final);
         while (has_paths_to_proccess) {
-            printf ("Thread %d processando mais um caminho\n", *thread_id);
-             std::ostringstream ss;
-             path_current->print (ss);
-             ss << " (thread " << *thread_id << ")\n";
-             std::cout << ss.str();
-            printf ("Restam %lu caminhos\n", paths.size());
             const Vertex v = path_current->lastVertex ();
             const std::list<Vertex>::const_iterator end = G->getNeighboursEnd (v);
             for (std::list<Vertex>::const_iterator it = G->getNeighboursBegin (v);
@@ -91,26 +86,27 @@ void *find_path (void *arg) {
                             shortest_paths[w].atomicInsert (new Path (*path_new));
                         if (new_size == n) {
                             num_finished_vertex++;
-                        } else {
-                            printf ("Found %lu paths for vertex %d\n", new_size, w);
-                        } 
+                        }
                     }
                 }
             }
             delete path_current;
             has_paths_to_proccess = paths.atomicRemove (cond, path_current);
-            printf ("Thread %d indo para prox iteracao\n", *thread_id);
+            //printf ("Thread %d indo para prox iteracao\n", *thread_id);
         }
         cond.incrementSizeCondition ();
         // Barreira
         if (debug_mode) {
-            std::ostringstream ss;
-            ss << "Iteracao " << cond.getSizeCondition ();
-            ss << ": Thread " << *thread_id << " chegou na barreira";
-            l.debug (ss);
+            pthread_mutex_lock (&print_mutex);
+            std::cout << "Iteracao " << cond.getSizeCondition ();
+            std::cout << ": Thread " << *thread_id << " chegou na barreira" << std::endl;
+            pthread_mutex_unlock (&print_mutex);
         }
         barrier->sync (*thread_id);
-        printf ("Thread %d passou pela barreira\n", *thread_id);
+        //printf ("Thread %d passou pela barreira\n", *thread_id);
+        if (debug_mode && (*thread_id == 0)) {
+            printPaths ();
+        }
     }
     barrier->setFinished (*thread_id);
     printf ("Thread %d acabou\n", *thread_id);
@@ -138,10 +134,8 @@ void free_memory () {
 int main (int argc, char* argv[]) {
     char* input_file_name = read_parameters (argc,argv);
     G = GraphFactory::readGraphFromFile (input_file_name); 
-    std::ostringstream message;
+    pthread_mutex_init (&print_mutex, NULL);
     int num_proc = numberOfProcessors();
-    message << "Numero de Processadores On: " << num_proc;
-    l.info (message);
     
     /* Fila de caminhos */
     Path *path_zero = new Path ();
@@ -155,6 +149,7 @@ int main (int argc, char* argv[]) {
     ThreadManager tm (num_proc);
     tm.createAndRunThreads (find_path);
 
+    pthread_mutex_destroy (&print_mutex);
     free_memory ();
 
     return 0;

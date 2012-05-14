@@ -9,8 +9,7 @@ using std::list;
 Graph* GraphFactory::readGraphFromFile (char* input_file_name) {
     FILE* arquivo_entrada = fopen (input_file_name, "r");
     if (arquivo_entrada == NULL){
-        Log& l = Log::getInstance ();
-        l.error ("Nao foi possivel abrir o arquivo de entrada"); 
+        std::cerr << "Nao foi possivel abrir o arquivo de entrada" << std::endl;
         exit(-1);
     }
 
@@ -26,20 +25,15 @@ Graph* GraphFactory::readGraphFromFile (char* input_file_name) {
     G->V_ = V;
 
     int cst = 0;
-    Log& l = Log::getInstance ();
     for (int i = 0; i < V; i++){
-        std::ostringstream ss;
         for (int j = 0; j < V; j++){
             fscanf (arquivo_entrada, "%d", &cst);
             if (cst) {
                 G->adj_[i].push_back (j);
                 G->A_++;
             }
-            ss << cst << " ";
         }
-        l.info (ss);
     }
-
     fclose (arquivo_entrada);
 
     return G;

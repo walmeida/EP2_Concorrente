@@ -23,7 +23,7 @@ void Barrier::sync (int thread_id) {
     for (int stage = 0; stage < num_stages_; ++stage) {
         arrive_[thread_id]++;
         int neighbour = (thread_id + (1 << stage)) % num_threads_;
-        printf ("neighbour = %d, stage %d of %d\n", neighbour, stage + 1, num_stages_);
+        //printf ("neighbour = %d, stage %d of %d\n", neighbour, stage + 1, num_stages_);
         while (arrive_[neighbour] < arrive_[thread_id]);
             //printf ("thread %d travada: %lu < %lu\n", thread_id,
             //        arrive_[neighbour], arrive_[thread_id]);

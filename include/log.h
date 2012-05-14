@@ -21,23 +21,23 @@ class Log {
         }
         void debug (std::string message) {
             if (debug_mode_) {
-                message = "DEBUG: " + message;
-                std::cout << message << std::endl;
+                message = "DEBUG: " + message + "\n";
+                std::cout << message;
             }
         }
         void debug (std::ostringstream &message) {
             debug (message.str());
         }
         void info (std::string message) {
-            message = "INFO:  " + message;
-            std::cout << message << std::endl;
+            message = "INFO:  " + message + "\n";
+            std::cout << message;
         }
         void info (std::ostringstream &message) {
             info (message.str());
         }
         void error (std::string message) {
-            message = "ERROR: " + message;
-            std::cout << message << std::endl;
+            message = "ERROR: " + message + "\n";
+            std::cout << message;
         }
         void error (std::ostringstream &message) {
             error (message.str());
