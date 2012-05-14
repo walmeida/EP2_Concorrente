@@ -17,6 +17,7 @@ Graph* G = NULL;
 Queue<Path*> *shortest_paths;
 Queue<Path*> paths;         
 int num_finished_vertex = 0;
+pthread_mutex_t num_finished_vertex_mutex;
 Barrier *barrier = NULL;
 bool debug_mode = false;
 pthread_mutex_t print_mutex;
@@ -118,7 +119,9 @@ void *find_path (void *arg) {
                         const unsigned long new_size = 
                             shortest_paths[w].atomicInsert (new Path (*path_new));
                         if (new_size == n) {
+                            pthread_mutex_lock (&num_finished_vertex_mutex);
                             num_finished_vertex++;
+                            pthread_mutex_unlock (&num_finished_vertex_mutex);
                         }
                     }
                 }
@@ -185,6 +188,7 @@ int main (int argc, char* argv[]) {
     pthread_mutex_init (&print_mutex, NULL);
     pthread_mutex_init (&barrier_iterations_mutex, NULL);
     pthread_mutex_init (&current_working_threads_mutex, NULL);
+    pthread_mutex_init (&num_finished_vertex_mutex, NULL);
     int num_proc = numberOfProcessors();
     pthread_mutex_lock (&current_working_threads_mutex);
     current_working_threads = num_proc;
@@ -210,6 +214,7 @@ int main (int argc, char* argv[]) {
               << std::endl << std::endl;
     printPaths (0);
 
+    pthread_mutex_destroy (&num_finished_vertex_mutex);
     pthread_mutex_destroy (&current_working_threads_mutex);
     pthread_mutex_destroy (&barrier_iterations_mutex);
     pthread_mutex_destroy (&print_mutex);
