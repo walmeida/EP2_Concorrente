@@ -3,7 +3,7 @@
 
 class Barrier {
     private:
-        unsigned long *arrive_;
+        volatile unsigned long *arrive_;
         int num_threads_;
         int num_stages_;
     public:
